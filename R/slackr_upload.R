@@ -9,6 +9,7 @@
 #' @param initial_comment comment for file on slack (optional - defaults to filename)
 #' @param channels Slack channels to save to (optional)
 #' @param bot_user_oauth_token Slack bot user OAuth token
+#' @param ... other arguments passed to the API as per \url{https://api.slack.com/methods/files.upload}
 #' @return \code{httr} response object from \code{POST} call (invisibly)
 #' @author Quinn Weber [ctb], Bob Rudis [aut]
 #' @references \url{https://github.com/hrbrmstr/slackr/pull/15/files}
@@ -16,7 +17,8 @@
 #' @export
 slackr_upload <- function(filename, title=basename(filename),
                           initial_comment=basename(filename),
-                          channels="", bot_user_oauth_token=Sys.getenv("SLACK_BOT_USER_OAUTH_TOKEN")) {
+                          channels="", bot_user_oauth_token=Sys.getenv("SLACK_BOT_USER_OAUTH_TOKEN"),
+                          ...) {
 
   f_path <- path.expand(filename)
 
@@ -34,7 +36,8 @@ slackr_upload <- function(filename, title=basename(filename),
                       httr::add_headers(`Content-Type`="multipart/form-data"),
                       body=list( file=httr::upload_file(f_path), filename=f_name,
                                  title=title, initial_comment=initial_comment,
-                                 token=bot_user_oauth_token, channels=paste(modchan, collapse=",")))
+                                 token=bot_user_oauth_token, channels=paste(modchan, collapse=","),
+                                 ...))
 
     return(invisible(res))
 
